@@ -74,7 +74,7 @@ class User(object):
 
                 days = [max(0, i - 1) for i in days]
 
-        schedule = [(calendartools.iso_to_gregorian(datetime.date.today().year, weekno, day), day_events) for (day, day_events) in zip(itertools.count(0), events)]
+        schedule = [(calendartools.iso_to_gregorian(datetime.date.today().year, weekno, day+1), day_events) for (day, day_events) in zip(itertools.count(0), events)]
         return schedule
 
     def _student_weeknum_schedule(self, print_link_base, weeknum):
