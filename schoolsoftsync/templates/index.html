@@ -1,0 +1,56 @@
+<html>
+	<head>
+		<title>Schoolsoft Calendar Synchronization</title>
+	</head>
+	<body>
+		<h1>Schoolsoft Calendar Synchronization</h1>
+		<p>
+			This service will convert your SchoolSoft schedule to the "iCalendar" format,<br/>
+			allowing you to sync it with most popular calendar software on the market today.
+		</p>
+		<p>
+			Note that while reasonable efforts have been gone through to store your credentials securely, they will still be sent unencrypted over the internet, so don't use a password you use for anything else. You will also need to go through the registration process again if you change your Schoolsoft password.
+		</p>
+		<ul>
+			{% with messages = get_flashed_messages() %}
+				{% for message in messages %}
+					<li>{{ message }}</li>
+				{% endfor %}
+			{% endwith %}
+			{% for field, errors in signup_form.errors|dictsort %}
+				{% for error in errors %}
+					<li>{{ signup_form[field].label }}: {{ error }}</li>
+				{% endfor %}
+			{% endfor %}
+		</ul>
+		<form method="POST">
+			<table>
+				<tr>
+					<td>{{ signup_form.school.label() }}</td>
+					<td>{{ signup_form.school() }}</td>
+					<td>{{ signup_form.school.description }}</td>
+				</tr>
+				<tr>
+					<td>{{ signup_form.username.label() }}</td>
+					<td>{{ signup_form.username() }}</td>
+					<td>{{ signup_form.username.description }}</td>
+				</tr>
+				<tr>
+					<td>{{ signup_form.password.label() }}</td>
+					<td>{{ signup_form.password() }}</td>
+					<td>{{ signup_form.password.description }}</td>
+				</tr>
+				<tr>
+					<td>{{ signup_form.old_password.label() }}</td>
+					<td>{{ signup_form.old_password() }}</td>
+					<td>{{ signup_form.old_password.description }}</td>
+				</tr>
+				<tr>
+					<td colspan="3">
+						<input type="submit" value="Sign up">
+					</td>
+				</tr>
+			</table>
+		</form>
+	</body>
+</html>
