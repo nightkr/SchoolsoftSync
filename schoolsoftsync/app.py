@@ -7,12 +7,17 @@ from . import schoolsoft, forms, models
 import datetime
 import os
 from functools import partial
+import logging
 
 
 app = Flask(__name__)
 flask_config = os.environ.get('FLASK_CONFIG', os.path.join(os.path.dirname(os.path.abspath(__file__)), 'dev_settings.py'))
 app.config.from_pyfile(flask_config)
 models.db.init_app(app)
+
+stderr_logger = logging.StreamHandler()
+stderr_logger.setLevel(logging.WARNING)
+app.logger.addHandler(stderr_logger)
 
 
 def ss_event_to_ical_event(day, event, tz):
