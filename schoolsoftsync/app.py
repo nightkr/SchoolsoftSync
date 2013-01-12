@@ -70,7 +70,7 @@ def http_pass(tz_region, tz, school):
     if not auth:
         return http_auth_fail
 
-    return serialize(http_auth_fail, tz_region, tz, school, auth.username, auth.password)
+    return Response(serialize(http_auth_fail, tz_region, tz, school, auth.username, auth.password), mimetype='text/calendar')
 
 
 @app.route("/ical_stored/<tz_region>/<tz>/<school>/<username>/<hash>")
@@ -82,7 +82,7 @@ def db_pass(tz_region, tz, school, username, hash):
         password = cred.decrypt_password(hash.decode("hex"))
     except TypeError:
         return db_auth_fail
-    return serialize(db_auth_fail, tz_region, tz, school, username, password)
+    return Response(serialize(db_auth_fail, tz_region, tz, school, username, password), mimetype='text/calendar')
 
 
 @app.route("/", methods=["GET", "POST"])
