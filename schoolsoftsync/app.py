@@ -46,6 +46,9 @@ def ss_day_to_ical_events(day, tz):
 def ss_cal_to_ical(weeks, tz):
     cal = icalendar.Calendar()
     cal.add('version', '2.0')
+    cal.add('prodid', '-//SchoolSoft Sync by Nullable//schoolsoftsync.herokuapp.com//EN')
+    cal.add('method', 'PUBLISH')
+    cal.add('x-wr-calname', 'SchoolSoft')
 
     for week in weeks:
         for day in week:
