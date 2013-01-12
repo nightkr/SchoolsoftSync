@@ -1,4 +1,4 @@
-from flask import Flask, request, Response, render_template, flash, url_for
+from flask import Flask, request, Response, render_template, flash, url_for, redirect
 import icalendar
 import pytz
 
@@ -6,6 +6,7 @@ from . import schoolsoft, forms, models
 
 import datetime
 import os
+from functools import partial
 
 
 app = Flask(__name__)
@@ -73,7 +74,7 @@ def http_pass(tz_region, tz, school):
     return Response(serialize(http_auth_fail, tz_region, tz, school, auth.username, auth.password), mimetype='text/calendar')
 
 
-@app.route("/ical_stored/<tz_region>/<tz>/<school>/<username>/<hash>")
+@app.route("/ical_stored/<tz_region>/<tz>/<school>/<username>/<hash>.ics")
 def db_pass(tz_region, tz, school, username, hash):
     cred = models.StoredCredential.query.filter_by(school=school, username=username).first()
     if not cred:
@@ -83,6 +84,9 @@ def db_pass(tz_region, tz, school, username, hash):
     except TypeError:
         return db_auth_fail
     return Response(serialize(db_auth_fail, tz_region, tz, school, username, password), mimetype='text/calendar')
+
+
+app.route("/ical_stored/<tz_region>/<tz>/<school>/<username>/<hash>")(lambda **kwa: redirect(url_for('db_pass', **kwa)))
 
 
 @app.route("/", methods=["GET", "POST"])
