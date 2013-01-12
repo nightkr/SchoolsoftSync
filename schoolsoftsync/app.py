@@ -27,10 +27,10 @@ def ss_event_to_ical_event(day, event, tz):
 
     ical = icalendar.Event()
     ical.add('summary', "%s: %s with %s" % (event['course_code'], event['course_readable'], event['teacher']))
-    ical.add('organizer;cn', event['teacher'])
+    ical.add('organizer', event['teacher'])
     ical.add('dtstart', start_time)
     ical.add('dtend', end_time)
-    ical['uid'] = "%s/%s" % (event['course_code'], start_time)
+    ical['uid'] = "%s-%s@schoolsoftsync.herokuapp.com" % (event['course_code'], start_time)
 
     if event['location']:
         ical.add('location', event['location'])
@@ -44,6 +44,13 @@ def ss_day_to_ical_events(day, tz):
 
 
 def ss_cal_to_ical(weeks, tz):
+    def signedstr(x):
+        string = str(x)
+        if string[0] == "-":
+            return string
+        else:
+            return "+" + string
+
     cal = icalendar.Calendar()
     cal.add('version', '2.0')
     cal.add('prodid', '-//SchoolSoft Sync by Nullable//schoolsoftsync.herokuapp.com//EN')
@@ -69,7 +76,28 @@ def serialize(auth_fail, tz_region, tz, school, username, password):
         user = schoolsoft.User(school, username, password)
         schedule = user.personal_student_schedule()
 
-        return ss_cal_to_ical(schedule, tz).to_ical()
+        # Hacks for adding the TZ data
+        ical = ss_cal_to_ical(schedule, tz)
+        ical.add('XXX-TZ-GOES', 'HERE')
+        strschedule = ical.to_ical()
+        return strschedule.replace('XXX-TZ-GOES:HERE', """BEGIN:VTIMEZONE
+TZID:Europe/Stockholm
+X-LIC-LOCATION:Europe/Stockholm
+BEGIN:STANDARD
+TZNAME:CET
+DTSTART:19701027T030000
+RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10
+TZOFFSETFROM:+0200
+TZOFFSETTO:+0100
+END:STANDARD
+BEGIN:DAYLIGHT
+TZNAME:CEST
+DTSTART:19700331T020000
+RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=3
+TZOFFSETFROM:+0100
+TZOFFSETTO:+0200
+END:DAYLIGHT
+END:VTIMEZONE""")
     except schoolsoft.AuthFailure:
         return auth_fail
 
