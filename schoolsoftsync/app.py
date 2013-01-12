@@ -1,4 +1,5 @@
 from flask import Flask, request, Response, render_template, flash, url_for, redirect
+from markupsafe import Markup
 import icalendar
 import pytz
 
@@ -122,6 +123,6 @@ def index():
 
             if verified:
                 addr = url_for('db_pass', _external=True, tz_region='Europe', tz='Stockholm', school=cred.school, username=cred.username, hash=key.encode("hex"))
-                flash("Signed up successfully, you can now subscribe to your schoolsoft schedule in your calendar by entering the address %s" % addr)
+                flash(Markup('Signed up successfully, you can now subscribe to your schoolsoft schedule in your calendar by entering the address <a href="%s">%s</a>' % (addr.replace("http://", "webcal://").replace("https://", "webcal://"), addr)))
 
     return render_template('index.html', signup_form=signup_form)
