@@ -44,7 +44,7 @@ class User(object):
 
     def _parse_schedule(self, sched, weekno):
         days = [0] * 5
-        events = [[]] * 5
+        events = [[] for _ in [()] * 5]
 
         for row in sched.table.contents[1:]:
             if not isinstance(row, NavigableString):
