@@ -138,27 +138,24 @@ def index():
             signup_form.school.data = school_re_match.group('school')
 
         cred = signup_form.find_stored_credential()
-        if cred and cred.decrypt_password(cred.get_password_crypto_key(signup_form.old_password.data)) != signup_form.old_password.data:
-            flash("The old password didn't match, please enter your old password too")
-        else:
-            if not cred:
-                cred = models.StoredCredential()
-                cred.school = signup_form.school.data
-                cred.username = signup_form.username.data
-                models.db.session.add(cred)
-            key, cred.encrypted_password = cred.encrypt_password(signup_form.password.data)
-            models.db.session.commit()
+        if not cred:
+            cred = models.StoredCredential()
+            cred.school = signup_form.school.data
+            cred.username = signup_form.username.data
+            models.db.session.add(cred)
+        key, cred.encrypted_password = cred.encrypt_password(signup_form.password.data)
+        models.db.session.commit()
 
-            try:
-                ss_user = schoolsoft.User(cred.school, cred.username, signup_form.password.data)
-                ss_user._try_get("https://sms.schoolsoft.se/%s/" % cred.school)
-                verified = True
-            except Exception:
-                flash("The credentials could not be verified with SchoolSoft")
-                verified = False
+        try:
+            ss_user = schoolsoft.User(cred.school, cred.username, signup_form.password.data)
+            ss_user._try_get("https://sms.schoolsoft.se/%s/" % cred.school)
+            verified = True
+        except Exception:
+            flash("The credentials could not be verified with SchoolSoft")
+            verified = False
 
-            if verified:
-                addr = url_for('db_pass', _external=True, tz_region='Europe', tz='Stockholm', school=cred.school, username=cred.username, hash=key.encode("hex"))
-                flash(Markup('Signed up successfully, you can now subscribe to your schoolsoft schedule in your calendar by entering the address <a href="%s">%s</a>' % (addr.replace("http://", "webcal://").replace("https://", "webcal://"), addr)))
+        if verified:
+            addr = url_for('db_pass', _external=True, tz_region='Europe', tz='Stockholm', school=cred.school, username=cred.username, hash=key.encode("hex"))
+            flash(Markup('Signed up successfully, you can now subscribe to your schoolsoft schedule in your calendar by entering the address <a href="%s">%s</a>' % (addr.replace("http://", "webcal://").replace("https://", "webcal://"), addr)))
 
     return render_template('index.html', signup_form=signup_form)
