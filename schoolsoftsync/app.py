@@ -156,7 +156,6 @@ def index():
             except Exception:
                 flash("The credentials could not be verified with SchoolSoft")
                 verified = False
-                raise
 
             if verified:
                 addr = url_for('db_pass', _external=True, tz_region='Europe', tz='Stockholm', school=cred.school, username=cred.username, hash=key.encode("hex"))
