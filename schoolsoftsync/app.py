@@ -7,6 +7,7 @@ from . import schoolsoft, forms, models
 
 import datetime
 import os
+import re
 from functools import partial
 import logging
 
@@ -131,6 +132,11 @@ def index():
     signup_form = forms.SignupForm(csrf_enabled=False)
 
     if signup_form.validate_on_submit():
+        signup_form.school.data = signup_form.school.data.lower()
+        school_re_match = re.compile('(https?://sms\d*.schoolsoft.se/)?(?P<school>[^/]+)/?.*').match(signup_form.school.data)
+        if school_re_match:
+            signup_form.school.data = school_re_match.group('school')
+
         cred = signup_form.find_stored_credential()
         if cred and cred.decrypt_password(cred.get_password_crypto_key(signup_form.old_password.data)) != signup_form.old_password.data:
             flash("The old password didn't match, please enter your old password too")
