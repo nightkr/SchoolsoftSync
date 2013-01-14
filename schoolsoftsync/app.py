@@ -144,7 +144,6 @@ def index():
             cred.username = signup_form.username.data
             models.db.session.add(cred)
         key, cred.encrypted_password = cred.encrypt_password(signup_form.password.data)
-        models.db.session.commit()
 
         try:
             ss_user = schoolsoft.User(cred.school, cred.username, signup_form.password.data)
@@ -152,9 +151,11 @@ def index():
             verified = True
         except Exception:
             flash("The credentials could not be verified with SchoolSoft")
+            models.db.session.rollback()
             verified = False
 
         if verified:
+            models.db.session.commit()
             addr = url_for('db_pass', _external=True, tz_region='Europe', tz='Stockholm', school=cred.school, username=cred.username, hash=key.encode("hex"))
             flash(Markup('Signed up successfully, you can now subscribe to your schoolsoft schedule in your calendar by entering the address <a href="%s">%s</a>' % (addr.replace("http://", "webcal://").replace("https://", "webcal://"), addr)))
 
