@@ -26,8 +26,12 @@ def ss_event_to_ical_event(day, event, tz):
     start_time = datetime.datetime.combine(day, event['start_time']).replace(tzinfo=tz)
     end_time = datetime.datetime.combine(day, event['end_time']).replace(tzinfo=tz)
 
+    summary = u"%s: %s" % (event['course_code'], event['course_readable'])
+    if event['teacher']:
+        summary += u" with %s" % event['teacher']
+
     ical = icalendar.Event()
-    ical.add('summary', "%s: %s with %s" % (event['course_code'], event['course_readable'], event['teacher']))
+    ical.add('summary', summary)
     ical.add('organizer', event['teacher'])
     ical.add('dtstart', start_time)
     ical.add('dtend', end_time)

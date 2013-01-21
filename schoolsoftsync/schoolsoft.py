@@ -60,12 +60,12 @@ class User(object):
                             course_code, start_time, = eventtable.tr
                             location, end_time, = course_code.parent.next_sibling
                             course_readable, = location.parent.next_sibling
-                            teacher, = course_readable.parent.next_sibling
+                            teacher, = course_readable.parent.next_sibling or (None,)
 
                             event = {
                                 'course_code': course_code.text.strip(),
                                 'course_readable': course_readable.text.strip(),
-                                'teacher': teacher.text.strip(),
+                                'teacher': teacher.text.strip() if teacher else None,
                                 'location': location.text.strip() or None,
                                 'start_time': datetime.datetime.strptime(start_time.text, "%H:%M").time(),
                                 'end_time': datetime.datetime.strptime(end_time.text[1:], "%H:%M").time(),
