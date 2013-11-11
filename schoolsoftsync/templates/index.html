@@ -10,6 +10,7 @@
 		</p>
 		<p>
 			Note that while reasonable efforts have been gone through to store your credentials securely, they will still be sent unencrypted over the internet, so don't use a password you use for anything else. You will also need to go through the registration process again if you change your Schoolsoft password.
+			However, Heroku will log the data used to generate your encryption key, there's nothing I can do about that, sorry. While I promise not to use it to retrieve your password, if you don't trust me you'll have to set up your own instance to use this.
 		</p>
 		<ul>
 			{% with messages = get_flashed_messages() %}
