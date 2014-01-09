@@ -86,7 +86,7 @@ class User(object):
     def personal_student_schedule(self, weeknums=None):
         if weeknums == None:
             this_week = datetime.date.today().isocalendar()[1]
-            weeknums = [this_week, this_week + 1]
+            weeknums = range(this_week, this_week + 4)
 
         parentr = self._try_get('https://sms.schoolsoft.se/%s/jsp/student/right_student_schedule.jsp' % self.school)
         parent = BeautifulSoup(parentr.text)
