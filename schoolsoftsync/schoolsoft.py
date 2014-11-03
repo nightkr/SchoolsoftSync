@@ -8,7 +8,7 @@ import re
 import datetime
 
 
-_login_page_re = r'https://sms(\d+).schoolsoft.se/%s/jsp/student/../../html/redirect_login.htm'
+_login_page_re = r'https://sms(\d*).schoolsoft.se/%s/html/redirect_login.htm'
 _sched_print_weeknum_strip_re = re.compile(r'(.+?)&term=\d+')
 
 
